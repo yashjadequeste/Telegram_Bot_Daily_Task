@@ -491,8 +491,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"❌ Error: {str(e)}")
 
 
+async def on_startup(app):
+    """Only one bot may poll Telegram — clear webhook on start."""
+    await app.bot.delete_webhook(drop_pending_updates=True)
+    print("Telegram polling ready (webhook removed).")
+
+
 def main():
-    app = Application.builder().token(BOT_TOKEN).build()
+    app = (
+        Application.builder()
+        .token(BOT_TOKEN)
+        .post_init(on_startup)
+        .build()
+    )
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("menu", cmd_menu))
     app.add_handler(CommandHandler("evening", cmd_evening))
@@ -503,8 +514,8 @@ def main():
 
     setup_reminder_jobs(app)
 
-    print("Bot Running...")
-    app.run_polling()
+    print("Bot Running... (stop local bot.py if also running on PC)")
+    app.run_polling(drop_pending_updates=True)
 
 
 if __name__ == "__main__":
