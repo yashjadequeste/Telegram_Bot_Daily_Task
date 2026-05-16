@@ -1,0 +1,20 @@
+1. SSH થી server પર જાઓ
+ssh -i ~/bot.pem ubuntu@YOUR_EC2_IP
+2. .env edit કરો
+cd ~/Telegram_Bot_Daily_Task
+nano .env
+Production માટે આ values set કરો:
+
+REMINDER_HOUR=19
+REMINDER_MINUTE=0
+ALLOW_WEEKEND_TEST=false
+SEND_TEST_ON_START=false
+Save: Ctrl+O → Enter → Ctrl+X
+
+3. Bot restart (.env પછી જરૂરી)
+sudo systemctl restart daily-report
+sudo systemctl status daily-report
+4. Test
+Telegram માં: /testnotif
+
+sudo journalctl -u daily-report -f           ///logs mate
