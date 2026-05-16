@@ -1,0 +1,21 @@
+# Secrets — NEVER commit
+.env
+
+# Generated / local data
+reports/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
