@@ -1,6 +1,8 @@
 import os
 import uuid
+from datetime import time
 
+import pytz
 from dotenv import load_dotenv
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
@@ -24,11 +26,17 @@ from task_manager import (
     get_pending_tasks,
     get_task_by_id,
 )
-from work_calendar import is_working_day
+from work_calendar import ALLOW_WEEKEND_TEST, is_working_day
 
 load_dotenv()
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+REMINDER_HOUR = int(os.getenv("REMINDER_HOUR", "19"))
+REMINDER_MINUTE = int(os.getenv("REMINDER_MINUTE", "0"))
+SEND_TEST_ON_START = os.getenv("SEND_TEST_ON_START", "false").lower() in (
+    "1", "true", "yes", "on"
+)
 
 STATUS_ICONS = {
     "Completed": "✅",
@@ -45,6 +53,76 @@ def status_keyboard(prefix):
             InlineKeyboardButton("❌ Pending", callback_data=f"{prefix}|Pending"),
         ]
     ]
+
+
+async def send_daily_reminder(context, force=False):
+    try:
+        if not force and not is_working_day():
+            print("Skip reminder — weekend (set ALLOW_WEEKEND_TEST=true).")
+            return
+
+        chat_id = CHAT_ID or os.getenv("TELEGRAM_CHAT_ID")
+        if not chat_id:
+            print("ERROR: TELEGRAM_CHAT_ID not set in Railway Variables!")
+            return
+
+        await context.bot.send_message(
+            chat_id=int(chat_id),
+            text=(
+                "🔔 *Daily Report Reminder*\n\n"
+                "Tap *Start Daily Report* below:\n"
+                "1️⃣ Complete pending tasks\n"
+                "2️⃣ Add today's task\n"
+                "3️⃣ Send email with Excel"
+            ),
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("▶️ Start Daily Report", callback_data="evening|begin")]
+            ]),
+            parse_mode="Markdown",
+            disable_notification=False,
+        )
+        print(f"Reminder sent to chat_id={chat_id}")
+    except Exception as e:
+        print(f"REMINDER FAILED: {e}")
+
+
+async def _test_reminder_on_start(context):
+    await send_daily_reminder(context, force=True)
+
+
+def setup_reminder_jobs(app):
+    ist = pytz.timezone("Asia/Kolkata")
+    reminder_time = time(
+        hour=REMINDER_HOUR,
+        minute=REMINDER_MINUTE,
+        tzinfo=ist,
+    )
+
+    if ALLOW_WEEKEND_TEST:
+        days = (0, 1, 2, 3, 4, 5, 6)
+    else:
+        days = (0, 1, 2, 3, 4)
+
+    app.job_queue.run_daily(
+        send_daily_reminder,
+        time=reminder_time,
+        days=days,
+        name="daily_reminder",
+    )
+
+    print(
+        f"Reminder scheduled {REMINDER_HOUR:02d}:{REMINDER_MINUTE:02d} IST | "
+        f"days={days} | ALLOW_WEEKEND_TEST={ALLOW_WEEKEND_TEST} | CHAT_ID={CHAT_ID}"
+    )
+
+    if SEND_TEST_ON_START:
+        app.job_queue.run_once(_test_reminder_on_start, when=15, name="test_on_start")
+        print("Test notification in 15 seconds (SEND_TEST_ON_START=true)")
+
+
+async def cmd_testnotif(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await send_daily_reminder(context, force=True)
+    await update.message.reply_text("Test notification sent! Check Telegram.")
 
 
 def main_menu_keyboard():
@@ -419,8 +497,12 @@ def main():
     app.add_handler(CommandHandler("menu", cmd_menu))
     app.add_handler(CommandHandler("evening", cmd_evening))
     app.add_handler(CommandHandler("myid", cmd_myid))
+    app.add_handler(CommandHandler("testnotif", cmd_testnotif))
     app.add_handler(CallbackQueryHandler(button_click))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    setup_reminder_jobs(app)
+
     print("Bot Running...")
     app.run_polling()
 

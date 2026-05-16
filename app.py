@@ -1,37 +1,16 @@
 """
-Run bot + 7 PM scheduler together (one command).
+One command: bot + reminder scheduler (inside bot, Railway-safe).
 
-Local:  python app.py
-Render: startCommand in render.yaml
+    python app.py
 """
-import threading
-import time
-
 from dotenv import load_dotenv
 
 load_dotenv()
 
-
-def main():
-    from scheduler import start_scheduler
-    from bot import main as run_bot
-
-    print("=" * 50)
-    print("Daily Report Bot — starting...")
-    print("  • Telegram bot (polling)")
-    print("  • 7 PM reminder scheduler (Mon–Fri IST)")
-    print("=" * 50)
-
-    scheduler_thread = threading.Thread(
-        target=start_scheduler,
-        name="scheduler",
-        daemon=True,
-    )
-    scheduler_thread.start()
-    time.sleep(1)
-
-    run_bot()
-
+from bot import main
 
 if __name__ == "__main__":
+    print("=" * 50)
+    print("Daily Report Bot starting (bot + scheduler)...")
+    print("=" * 50)
     main()

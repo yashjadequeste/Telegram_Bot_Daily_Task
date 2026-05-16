@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 
-from work_calendar import is_working_day
+from work_calendar import ALLOW_WEEKEND_TEST, is_working_day
 
 load_dotenv()
 
@@ -49,11 +49,12 @@ def send_reminder():
 def start_scheduler():
     scheduler = BackgroundScheduler(timezone="Asia/Kolkata")
 
-    # Always Mon–Fri at 7 PM IST (production). Weekend = no reminder.
+    cron_days = "*" if ALLOW_WEEKEND_TEST else "mon-fri"
+
     scheduler.add_job(
         send_reminder,
         "cron",
-        day_of_week="mon-fri",
+        day_of_week=cron_days,
         hour=REMINDER_HOUR,
         minute=REMINDER_MINUTE,
         id="daily_reminder",
