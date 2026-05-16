@@ -6,9 +6,8 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/daily-report-bot
-EnvironmentFile=/home/ubuntu/daily-report-bot/.env
-ExecStart=/home/ubuntu/daily-report-bot/.venv/bin/python app.py
+WorkingDirectory=/home/ubuntu/Telegram_Bot_Daily_Task
+ExecStart=/home/ubuntu/Telegram_Bot_Daily_Task/.venv/bin/python app.py
 Restart=always
 RestartSec=10
 
