@@ -35,57 +35,17 @@ python app.py
 
 ## Option 2 — Oracle Cloud Always Free (24/7 FREE) ⭐ recommended
 
-Oracle આપે છે **forever free** small server (VM).
+**Full step-by-step guide:** **[DEPLOY_ORACLE.md](DEPLOY_ORACLE.md)**
 
-### Steps
+Quick summary:
+1. [cloud.oracle.com](https://cloud.oracle.com) → sign up (card verify)
+2. Create Ubuntu VM — **Ampere Always Free** shape
+3. SSH → `git clone` your repo
+4. `nano .env` → add secrets
+5. `./deploy/setup-oracle.sh` → auto install + 24/7 service
+6. Telegram `/testnotif` test
 
-1. [cloud.oracle.com](https://cloud.oracle.com) → Sign up (card verify, charge નહીં free tier માટે)
-2. **Create VM** → Ubuntu 22.04 → **Always Free** shape (ARM Ampere 4 OCPU / 24 GB RAM)
-3. SSH connect:
-   ```bash
-   ssh ubuntu@YOUR_VM_IP
-   ```
-4. Install:
-   ```bash
-   sudo apt update
-   sudo apt install -y python3 python3-pip git
-   git clone https://github.com/YOUR_USER/daily-report-bot.git
-   cd daily-report-bot
-   pip3 install -r requirements.txt
-   ```
-5. Create `.env` on server (copy from your local, **do not push to GitHub**):
-   ```bash
-   nano .env
-   ```
-6. Run always (systemd):
-   ```bash
-   sudo nano /etc/systemd/system/daily-report.service
-   ```
-   Paste:
-   ```ini
-   [Unit]
-   Description=Daily Report Telegram Bot
-   After=network.target
-
-   [Service]
-   Type=simple
-   User=ubuntu
-   WorkingDirectory=/home/ubuntu/daily-report-bot
-   ExecStart=/usr/bin/python3 app.py
-   Restart=always
-   RestartSec=10
-
-   [Install]
-   WantedBy=multi-user.target
-   ```
-   ```bash
-   sudo systemctl enable daily-report
-   sudo systemctl start daily-report
-   sudo systemctl status daily-report
-   ```
-7. Reports save at: `/home/ubuntu/daily-report-bot/reports/`
-
-**Cost: ₹0/month** (always free tier limits અંદર)
+Reports: `/home/ubuntu/daily-report-bot/reports/`
 
 ---
 

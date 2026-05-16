@@ -1,0 +1,16 @@
+[Unit]
+Description=Daily Report Telegram Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/daily-report-bot
+EnvironmentFile=/home/ubuntu/daily-report-bot/.env
+ExecStart=/home/ubuntu/daily-report-bot/.venv/bin/python app.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
