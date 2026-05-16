@@ -111,12 +111,23 @@ EMAIL_RECEIVERS=email1@gmail.com,email2@gmail.com
 
 ---
 
+## Option — AWS EC2 ($200 credit / 12 month free tier)
+
+**Full guide:** **[DEPLOY_AWS.md](DEPLOY_AWS.md)**
+
+- t3.micro free ~12 months
+- $200 credit ≈ 20+ months after
+- Same setup: EC2 → git clone → `.env` → `./deploy/setup-aws.sh`
+
+---
+
 ## Quick choice
 
 | તમને શું જોઈએ | Use |
 |-------------|-----|
 | સૌથી સરળ, PC on રાખી શકો | **Local `python app.py`** |
-| 24/7, PC બંધ, completely free | **Oracle Cloud VM** |
+| 24/7, forever free | **Oracle Cloud VM** — [DEPLOY_ORACLE.md](DEPLOY_ORACLE.md) |
+| 24/7, AWS $200 credit | **AWS EC2** — [DEPLOY_AWS.md](DEPLOY_AWS.md) |
 | Test only | Local |
 
 ---
