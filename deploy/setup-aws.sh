@@ -22,8 +22,9 @@ else
 fi
 
 if ! command -v "$PY" &>/dev/null; then
-  echo "python3.12 not found, using python3"
-  PY=python3
+  echo "ERROR: python3.12 is required (python3.14 breaks python-telegram-bot)."
+  echo "Run: sudo apt install -y python3.12 python3.12-venv python3.12-dev"
+  exit 1
 fi
 
 echo "Using Python: $($PY --version)"
