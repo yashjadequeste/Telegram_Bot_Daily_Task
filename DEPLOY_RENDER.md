@@ -1,5 +1,8 @@
 # Deploy Daily Report Bot on Render (Live)
 
+> **Note:** Render **Background Worker is PAID** (not free).  
+> For **free deploy** use **[DEPLOY_FREE.md](DEPLOY_FREE.md)** (Oracle Cloud / local PC).
+
 ## One command (local)
 
 ```bash
