@@ -227,7 +227,7 @@ sudo systemctl restart daily-report
 
 | Problem | Fix |
 |---------|-----|
-| `AttributeError: _Updater__polling_cleanup_cb` | **Python 3.14** — venv ફરીથી **3.12** થી બનાવો (નીચે) |
+| `AttributeError: _Updater__polling_cleanup_cb` | **Python 3.14 + PTB 20.7** — `pip install -r requirements.txt` (PTB 22+) |
 | SSH નહીં થાય | Security group port 22, correct .pem path |
 | `Conflict getUpdates` | PC/Railway bot બંધ કરો |
 | `git pull` blocks on `setup-aws.sh` | `git stash` અથવા `git checkout -- deploy/setup-aws.sh` પછી pull |
@@ -237,23 +237,22 @@ sudo systemctl restart daily-report
 
 ### Python 3.14 crash (telegram `Updater` error)
 
-Ubuntu 26+ default `python3` = **3.14** — `python-telegram-bot==20.7` સાથે કામ નથી કરતું.
+Ubuntu 26 default = **Python 3.14**. `python3.12` apt માં નથી. Fix: **upgrade** `python-telegram-bot` to 22+ (already in `requirements.txt`).
 
 ```bash
 cd ~/Telegram_Bot_Daily_Task
 sudo systemctl stop daily-report
-git stash
 git pull
-sudo apt install -y python3.12 python3.12-venv python3.12-dev
-rm -rf .venv
-python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python --version   # must show 3.12.x
-python app.py      # should print "Bot Running..." — Ctrl+C
+python app.py      # "Bot Running..." — Ctrl+C
 sudo systemctl restart daily-report
 sudo systemctl status daily-report
 ```
+
+જો `git pull` fail (local changes): `git stash` પછી pull.
+
+**નવી EC2 instance:** Ubuntu **22.04 LTS** AMI use કરો (python3.12 apt માં મળે).
 
 ---
 

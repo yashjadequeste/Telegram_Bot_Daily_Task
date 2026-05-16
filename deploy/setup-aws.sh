@@ -13,18 +13,24 @@ echo "=== Daily Report Bot - AWS EC2 setup ==="
 sudo apt update -y
 sudo apt install -y git
 
-# Prefer Python 3.12 (stable). Ubuntu 3.14 can cause crashes.
+# Ubuntu 26 has only python3.14 in apt — use it with PTB 22+ (see requirements.txt).
+# Ubuntu 22.04/24.04: python3.12 from apt also works.
+PY=python3
 if command -v python3.12 &>/dev/null; then
   PY=python3.12
+elif ! python3 -c 'import sys; exit(0 if sys.version_info >= (3, 14) else 1)' 2>/dev/null; then
+  PY=python3
 else
-  sudo apt install -y python3.12 python3.12-venv python3.12-dev || true
-  PY=python3.12
-fi
-
-if ! command -v "$PY" &>/dev/null; then
-  echo "ERROR: python3.12 is required (python3.14 breaks python-telegram-bot)."
-  echo "Run: sudo apt install -y python3.12 python3.12-venv python3.12-dev"
-  exit 1
+  echo "Python 3.14 detected — installing python3.13 from deadsnakes (optional fallback)..."
+  if ! command -v python3.13 &>/dev/null; then
+    sudo apt install -y software-properties-common
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    sudo apt update -y
+    sudo apt install -y python3.13 python3.13-venv python3.13-dev || true
+  fi
+  if command -v python3.13 &>/dev/null; then
+    PY=python3.13
+  fi
 fi
 
 echo "Using Python: $($PY --version)"
