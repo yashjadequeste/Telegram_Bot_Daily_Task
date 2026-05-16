@@ -56,18 +56,24 @@
 
 ## Part 3 — Windows થી Connect (SSH)
 
-### PowerShell માં:
+### WSL (recommended on Windows):
+```bash
+cp /mnt/d/my/daily-report-bot/bot.pem ~/bot.pem
+chmod 400 ~/bot.pem
+ssh -i ~/bot.pem ubuntu@YOUR_PUBLIC_IP
+```
+
+### PowerShell (Windows):
 ```powershell
 cd C:\Users\YASH\Downloads
 icacls daily-report-key.pem /inheritance:r
 icacls daily-report-key.pem /grant:r "%USERNAME%:R"
-
 ssh -i "daily-report-key.pem" ubuntu@YOUR_PUBLIC_IP
 ```
 
-`YOUR_PUBLIC_IP` ની જગ્યાએ EC2 IP નાખો.
+`YOUR_PUBLIC_IP` ની જગ્યાએ EC2 IP નાખો. પહેલી વાર `yes` લખો.
 
-પહેલી વાર connect થાય તો `yes` લખો.
+> WSL error `Permissions 0777 too open` → key ને `~/bot.pem` પર copy કરી `chmod 400` કરો.
 
 ---
 
