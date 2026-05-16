@@ -89,7 +89,25 @@ Oracle આપે છે **forever free** small server (VM).
 
 ---
 
-## Option 3 — Fly.io (Free allowance)
+## Option 3 — Railway (build fix applied)
+
+Railway uses Python **3.13** by default — `Pillow==10.2.0` fails.
+
+Project now has:
+- `runtime.txt` → Python **3.10**
+- `railway.toml` → `python app.py`
+- `Pillow>=10.4.0`
+
+**Railway setup:**
+1. New Project → Deploy from GitHub repo
+2. **Variables** → add all from `.env.example` (not `.env` file)
+3. Deploy
+
+**Note:** Railway free credit limited — not truly free 24/7 long term.
+
+---
+
+## Option 4 — Fly.io (Free allowance)
 
 1. [fly.io](https://fly.io) → sign up
 2. Install flyctl → `fly launch` in project folder
@@ -101,7 +119,7 @@ Free tier limited hours/credit — check fly.io pricing page.
 
 ---
 
-## Option 4 — Render Free Web (NOT recommended for this bot)
+## Option 5 — Render Free Web (NOT recommended for this bot)
 
 Render **free web** sleeps after 15 min → Telegram bot + 7 PM scheduler **બરાબર કામ નહીં કરે**.
 
